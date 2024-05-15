@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="./bug-info/2.16.0.js"></script>
+    <script src="./report-conf.js"></script>
+    <style>
+        .win {
+            width: 90%;
+            margin: 0 auto;
+        }
+        #version {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="win">
+        <h1 id="version">测试报告 - </h1>
+        <div id="version-info">
+            <h2>版本概述</h2>
+            <p class="time"><strong>测试周期：</strong></p>
+            <p><strong>主要测试范围：</strong></p>
+        </div>
+        <hr>
+        <div id="bug-info">
+            <h2>缺陷分析</h2>
+            <ul>
+                <li id="public">
+                    <strong>测试情况概述</strong>
+                    <p data-info="current"></p>
+                    <p data-info="previous"></p>
+                </li>
+                <li id="bug-level">
+                    <strong>高缺陷程度的Bug分析</strong>
+                    <ul>
+                        <li id="regression">
+                            <strong>反复提交的Bug：</strong>
+                            <div class="list"></div>
+                            <p class="desc"></p>
+                        </li>
+                        <li id="high-level">
+                            <strong>缺陷程度高的Bug：</strong>
+                            <div class="list"></div>
+                            <p class="desc"></p>
+                        </li>
+                        <li id="low-quality">
+                            <strong>未达交付质量的Bug：</strong>
+                            <div class="list"></div>
+                            <p class="desc"></p>
+                        </li>
+                        <li id="missed-test">
+                            <strong>漏测的Bug：</strong>
+                            <div class="list"></div>
+                            <p class="desc"></p>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <hr>
+        <div id="version-risk">
+            <h2>版本风险</h2>
+            <ul>
+                <li class="unresolved">
+                    <strong>本周期存在部分Bug暂未解决:</strong>
+                    <div class="list"></div>
+                </li>
+            </ul>
+            <ul>
+                <li class="unreproducible">
+                    <strong>本周期存在部分Bug无法稳定复现:</strong>
+                    <div class="list"></div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <script src="./report.js"></script>
+</html>

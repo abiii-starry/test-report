@@ -1,0 +1,1 @@
+1.bug-info命名为 version.js
