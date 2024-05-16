@@ -26,12 +26,23 @@ function getColByName(colName) {
 }
 
 function getTotalValidBugInfo() {
-    return totalBugData.filter((item) => reportConfig.validBugStatus.includes(item[BUG_KEY.bugStatus]));
-}
+    const validBugData = totalBugData;
+
+    for (let item of validBugData) {
+        if (!item[BUG_KEY.currentVersion]) {
+            item[BUG_KEY.currentVersion] = validBugData[validBugData.indexOf(item) - 1][BUG_KEY.currentVersion];
+        }
+        // Remove emoji for bugs that have been resolved
+        if (item[BUG_KEY.bugStatus] && item[BUG_KEY.bugStatus].includes(reportConfig.validBugStatus[0])) item[BUG_KEY.bugStatus] = reportConfig.validBugStatus[0];
+    }
+    
+    return validBugData.filter((item) => reportConfig.validBugStatus.includes(item[BUG_KEY.bugStatus]) && item[BUG_KEY.currentVersion] == reportConfig.version);
+};
+console.log(getTotalValidBugInfo());
 
 function getTestPeriod() {
     const bugSubmitTimeList = getColByName(BUG_KEY.submitTime);
-    return { startTime: bugSubmitTimeList[0], endTime: bugSubmitTimeList[bugSubmitTimeList.length - 1] }
+    return { startTime: bugSubmitTimeList[0], endTime: bugSubmitTimeList[bugSubmitTimeList.length - 1] };
 }
 
 // Compare the total number of bugs and regression averages with previous version
