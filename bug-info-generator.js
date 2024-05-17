@@ -1,9 +1,9 @@
 const reportConfig = require("./report-conf.js")
 const XLSX = require("xlsx");
 const fs = require("fs");
+const repJson = require("./bug-info/2.16.0.js");
 
 let bugSheet = XLSX.readFile(`bug-excel/${reportConfig.fileName}`).Sheets[`${reportConfig.sheetName}`];
-let header = XLSX.utils.sheet_to_json(bugSheet, {header: 1})[0];
 let totalBugData  = XLSX.utils.sheet_to_json(bugSheet);
 const BUG_KEY = reportConfig.sheetHeaderKey;
 const BUG_LEVEL = reportConfig.bugLevel;
@@ -27,21 +27,31 @@ function getColByName(colName) {
 
 function getTotalValidBugInfo() {
     const validBugData = totalBugData;
+    const currentVersion = BUG_KEY.currentVersion;
+    const submitTime = BUG_KEY.submitTime;
 
     for (let item of validBugData) {
-        if (!item[BUG_KEY.currentVersion]) {
-            item[BUG_KEY.currentVersion] = validBugData[validBugData.indexOf(item) - 1][BUG_KEY.currentVersion];
+        // Fill in missing version number information
+        if (!item[currentVersion]) {
+            item[currentVersion] = validBugData[validBugData.indexOf(item) - 1][currentVersion];
         }
+        // Fill in missing submit time information
+        if (!item[submitTime]) {
+            item[submitTime] = validBugData[validBugData.indexOf(item) - 1][submitTime];
+        }
+
         // Remove emoji for bugs that have been resolved
-        if (item[BUG_KEY.bugStatus] && item[BUG_KEY.bugStatus].includes(reportConfig.validBugStatus[0])) item[BUG_KEY.bugStatus] = reportConfig.validBugStatus[0];
+        if (item[BUG_KEY.bugStatus]) {
+            if (item[BUG_KEY.bugStatus].includes(reportConfig.validBugStatus[0])) item[BUG_KEY.bugStatus] = reportConfig.validBugStatus[0];
+            if (item[BUG_KEY.bugStatus].includes(reportConfig.validBugStatus[1])) item[BUG_KEY.bugStatus] = reportConfig.validBugStatus[1];
+        }
     }
     
     return validBugData.filter((item) => reportConfig.validBugStatus.includes(item[BUG_KEY.bugStatus]) && item[BUG_KEY.currentVersion] == reportConfig.version);
 };
-console.log(getTotalValidBugInfo());
 
 function getTestPeriod() {
-    const bugSubmitTimeList = getColByName(BUG_KEY.submitTime);
+    const bugSubmitTimeList = Array.from(totalValidBugInfo, (item, index) => item[BUG_KEY.submitTime]);
     return { startTime: bugSubmitTimeList[0], endTime: bugSubmitTimeList[bugSubmitTimeList.length - 1] };
 }
 
@@ -51,7 +61,7 @@ function compareBugInfoWithPrevious() {
         const previousVersionPath = `./bug-info/${reportConfig.previousVersion}.js`;
         const previousVersionInfo = require(previousVersionPath);
         const bugCountChangeRate = totalValidBugCount / previousVersionInfo.totalBugCount - 1;
-        const avgRegressionChangeRate = getAvgRegressionCount() / previousVersionInfo.regressionInfo.avgRegressionCount;
+        const avgRegressionChangeRate = getAvgRegressionCount() / previousVersionInfo.regressionInfo.avgRegressionCount - 1;
 
         return { bugCountChangeRate, avgRegressionChangeRate };
     } else {
@@ -77,8 +87,10 @@ function getBugDataByLevel(level) {
 // Regression information function
 function getAvgRegressionCount() {
     let totalRegressionCount = getColByName(BUG_KEY.regressionCount).reduce((accumulator, currentElem) => {
+        // If the number of regressions is not filled in, it is considered to be the basic number of regressions 2
+        if(!Number.isInteger(currentElem)) currentElem = reportConfig.baseRegressionNumber;
         return accumulator + currentElem;
-    }, 0);
+    });
 
     return (totalRegressionCount / totalValidBugCount).toFixed(2);
 }
@@ -117,7 +129,7 @@ function getLowQualityAndMissedBugInfo() {
 
 // Version risk: Unresolved bugs and bugs that cannot be reproduced consistently
 function getUnresolvedBug() {
-    return totalValidBugInfo.filter((item) => item[BUG_KEY.bugStatus] == reportConfig.validBugStatus[1]);
+    return totalValidBugInfo.filter((item) => item[BUG_KEY.bugStatus] == reportConfig.validBugStatus[2]);
 }
 
 function getUnreproducibleBug() {

@@ -4,10 +4,11 @@ const reportConfig = {
     version: "2.16.0",
     sheetEndline: 300,
     bugLevel: ["Minor（低）", "Normal（中）", "Major（高）", "优化"],
-    validBugStatus: ["已解决", "暂不解决", "未解决", "无法复现"],  // Do not change the order of these types
+    validBugStatus: ["已解决", "未解决", "暂不解决", "无法复现"],  // Do not change the order of these types
     invalidBugStatus: ["——"],
     lowQualityNote: "未达交付质量",
     missedBugNote: "漏测",
+    baseRegressionNumber: 2,
     sheetHeaderKey: {
         number: "序号",
         currentVersion: "版本",
