@@ -3,6 +3,9 @@
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.2/xlsx-0.20.2.tgz"
   },
   "scripts": {
-    "generate-report": "node ./bug-info-generator.js && start ./report.html"
+    "generate-report": "node ./bug-info-generator.js && http-server -o ./report.html"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
   }
 }
