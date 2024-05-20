@@ -1,7 +1,6 @@
 const reportConfig = require("./report-conf.js")
 const XLSX = require("xlsx");
 const fs = require("fs");
-const repJson = require("./bug-info/2.16.0.js");
 
 let bugSheet = XLSX.readFile(`bug-excel/${reportConfig.fileName}`).Sheets[`${reportConfig.sheetName}`];
 let totalBugData  = XLSX.utils.sheet_to_json(bugSheet);
