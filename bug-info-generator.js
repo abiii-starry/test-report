@@ -87,15 +87,18 @@ function getBugDataByLevel(level) {
 function getAvgRegressionCount() {
     let totalRegressionCount = getColByName(BUG_KEY.regressionCount).reduce((accumulator, currentElem) => {
         // If the number of regressions is not filled in, it is considered to be the basic number of regressions 2
-        if(!Number.isInteger(currentElem)) currentElem = reportConfig.baseRegressionNumber;
+        if (!Number.isInteger(currentElem)) {
+            if (currentElem == reportConfig.invalidBugStatus[0]) currentElem = 0;
+            else currentElem = reportConfig.baseRegressionNumber;
+        } 
         return accumulator + currentElem;
-    });
+    }, 0);
 
     return (totalRegressionCount / totalValidBugCount).toFixed(2);
 }
 
 function getMaxRegressionCount() {
-    const regressionCountList = getColByName(BUG_KEY.regressionCount);
+    const regressionCountList = getColByName(BUG_KEY.regressionCount).filter((item) => Number.isInteger(item));
     
     for (let i = 1; i <= regressionCountList.length - 1; i++) {
         for (let j = 0; j < regressionCountList.length - i; j++) {
