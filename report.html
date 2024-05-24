@@ -23,9 +23,13 @@
     <body>
         <script>
             $("body").prepend(`<script src="./bug-info/${reportConfig.version}.js"><\/script>`);
+            $.get("/fixtures/bean-loading.html", function(data) {
+                $("#bean").html(data);
+            });
         </script>
         <div class="win">
-            <h1 id="version">测试报告 - </h1>
+            <div id="bean"></div> 
+            <h1 id="version" style="margin-top: 0;">测试报告 - </h1>
             <div id="version-info">
                 <h2>版本概述</h2>
                 <p class="time"><strong>测试周期：</strong></p>
